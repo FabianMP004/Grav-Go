@@ -1,0 +1,9 @@
+:root{--orange:#ff6a00;--dark:#0b0b0b;--muted:#666;--bg:#fffaf6}
+.hero{padding:3rem 0}
+.hero-grid{display:grid;grid-template-columns:1fr 420px;gap:2rem;align-items:center}
+.kicker{color:var(--orange);font-weight:700;margin:0}
+.lead{color:var(--muted);line-height:1.5}
+.app-logo-large{width:320px;height:320px;border-radius:50%;background:#ffd8b8;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.app-logo-img{width:100%;height:100%;object-fit:cover}
+.btn-orange{background:var(--orange);color:white;border:none;padding:.6rem .9rem;border-radius:12px}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr;text-align:center}.hero-art{order:-1}.app-logo-large{width:260px;height:260px}}
