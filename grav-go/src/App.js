@@ -1,56 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import AuthOverlay from './components/AuthOverlay';
+import AuthPages from './pages/AuthPages';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Tracker from './components/Tracker';
 import BalanceModal from './components/BalanceModal';
 
 function App(){
-  // users and session persisted in localStorage to mirror the previous implementation
-  const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [balance, setBalance] = useState(8.5);
   const [showBalanceModal, setShowBalanceModal] = useState(false);
-
-  // load users and session on mount
-  useEffect(()=>{
+  // users list (persistent)
+  const [users, setUsers] = useState(() => {
     try{
       const u = JSON.parse(localStorage.getItem('gravgo_users') || 'null') || [];
       if(!Array.isArray(u) || u.length === 0){
         const demo = { name: 'Admin', email: 'admin@ufm.edu', password: 'admin', balance: 20.00 };
         localStorage.setItem('gravgo_users', JSON.stringify([demo]));
-        setUsers([demo]);
-      } else {
-        setUsers(u);
+        return [demo];
       }
-    }catch(e){ console.error(e); setUsers([]); }
+      return u;
+    }catch(e){ return []; }
+  });
 
+  // load session on mount (token + user stored after login)
+  useEffect(()=>{
     try{
       const su = JSON.parse(localStorage.getItem('gravgo_user') || 'null');
-      if(su){
-        setCurrentUser(su);
-        setBalance(+(su.balance || 8.5));
-      }
+      if(su){ setCurrentUser(su); setBalance(+(su.balance || 8.5)); }
     }catch(e){ console.error(e); }
   },[]);
 
   // handlers passed to components
-  const handleLogin = (found) => {
-    if(!found) return;
-    setCurrentUser(found);
-    setBalance(+(found.balance || balance));
-    localStorage.setItem('gravgo_user', JSON.stringify(found));
-  }
-
-  const handleRegister = (newUser) => {
-    const updated = [...users, newUser];
-    setUsers(updated);
-    localStorage.setItem('gravgo_users', JSON.stringify(updated));
-    // set session
-    setCurrentUser(newUser);
-    setBalance(+(newUser.balance || balance));
-    localStorage.setItem('gravgo_user', JSON.stringify(newUser));
+  const handleAuthSuccess = (user, token) => {
+    if(!user) return;
+    setCurrentUser(user);
+    setBalance(+(user.balance || balance));
+    localStorage.setItem('gravgo_user', JSON.stringify(user));
+    localStorage.setItem('gravgo_token', token);
+    // ensure the logged user is present in the users list
+    try{
+      const exists = users.find(u => u.email === user.email);
+      if(!exists){
+        const updated = [...users, user];
+        setUsers(updated);
+        localStorage.setItem('gravgo_users', JSON.stringify(updated));
+      }
+    }catch(e){ /* noop */ }
   }
 
   const handleTopUp = (amount) => {
@@ -80,6 +76,15 @@ function App(){
     }
   }
 
+  // If user is not authenticated, show the auth pages exclusively
+  if(!currentUser){
+    return (
+      <div className="App-root">
+        <AuthPages onAuthSuccess={handleAuthSuccess} />
+      </div>
+    );
+  }
+
   return (
     <div className="App-root">
       <Navbar onShowBalance={() => setShowBalanceModal(true)} currentUser={currentUser} />
@@ -90,8 +95,6 @@ function App(){
       </main>
 
       <BalanceModal visible={showBalanceModal} balance={balance} onTopUp={handleTopUp} onClose={() => setShowBalanceModal(false)} />
-
-      <AuthOverlay visible={!currentUser} users={users} onLogin={handleLogin} onRegister={handleRegister} />
     </div>
   );
 }

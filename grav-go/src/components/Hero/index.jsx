@@ -1,5 +1,6 @@
 import React from 'react';
 import './styles.css';
+import logo from '../../assets/grav-go.jpg';
 
 export default function Hero({ onShowBalance }){
   return (
@@ -15,7 +16,7 @@ export default function Hero({ onShowBalance }){
 
         <div className="hero-art">
           <div className="app-logo-large" id="app-logo-large">
-            <img src={process.env.PUBLIC_URL + '/grav-go.jpg'} alt="Grav-Go logo grande" className="app-logo-img" />
+            <img src={logo} alt="Grav-Go logo grande" className="app-logo-img" />
           </div>
         </div>
       </div>
