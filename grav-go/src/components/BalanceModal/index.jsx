@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './styles.css';
 
 export default function BalanceModal({ visible, balance = 0, onTopUp, onClose }){
@@ -9,13 +9,6 @@ export default function BalanceModal({ visible, balance = 0, onTopUp, onClose })
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [displayBalance, setDisplayBalance] = useState(balance);
-
-  // Update display balance when balance prop changes
-  useEffect(() => {
-    setDisplayBalance(balance);
-    console.log('BalanceModal: Balance updated to', balance);
-  }, [balance]);
 
   if(!visible) return null;
 
@@ -35,9 +28,6 @@ export default function BalanceModal({ visible, balance = 0, onTopUp, onClose })
       setLoading(true);
       await onTopUp && onTopUp(a);
       setMessage('Recarga exitosa.');
-      // Reset form after successful topup
-      setAmount(10);
-      // Don't close form, let user see the success message and updated balance
     }catch(err){
       console.error('TopUp error', err);
       setMessage(err.message || 'Error al recargar');
@@ -52,18 +42,17 @@ export default function BalanceModal({ visible, balance = 0, onTopUp, onClose })
           <button className="btn-close" onClick={handleClose}>×</button>
         </div>
         <div className="modal-body">
-          <p>Tu saldo actual es: <strong>S/ {displayBalance.toFixed(2)}</strong></p>
-          <p className="balance-description">Este saldo se utiliza para pagar el fee del servicio de recolección del pedido.</p>
+          <p>Tu saldo actual es: <strong>Q {balance.toFixed(2)}</strong></p>
 
           {!showForm ? (
-            <div className="actions" style={{marginTop:12}}>
+            <div className="actions">
               <button className="btn btn-orange" onClick={()=>setShowForm(true)}>Realizar recarga</button>
-              <button type="button" className="btn btn-close-modal" onClick={handleClose}>Cerrar</button>
+              <button type="button" className="btn btn-secondary" onClick={handleClose}>Cerrar</button>
             </div>
           ) : (
             <form onSubmit={submit}>
               <div className="field">
-                <label>Monto a recargar (S/)</label>
+                <label>Monto a recargar (Q)</label>
                 <input type="number" min="1" step="0.01" value={amount} onChange={e=>setAmount(e.target.value)} className="form-control" />
               </div>
 
@@ -85,9 +74,9 @@ export default function BalanceModal({ visible, balance = 0, onTopUp, onClose })
 
               {message && <div className="text-muted small mt-2">{message}</div>}
 
-              <div className="actions" style={{marginTop:12}}>
+              <div className="actions">
                 <button className="btn btn-orange" type="submit" disabled={loading}>{loading ? 'Procesando…' : 'Recargar'}</button>
-                <button type="button" className="btn btn-cancel" onClick={()=>{ setShowForm(false); setMessage(''); }}>Cancelar</button>
+                <button type="button" className="btn btn-secondary" onClick={()=>{ setShowForm(false); setMessage(''); }}>Cancelar</button>
               </div>
             </form>
           )}
