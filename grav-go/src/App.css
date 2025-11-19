@@ -1,0 +1,64 @@
+.App-root{
+  min-height:100vh;
+  background: #fffaf6;
+  color: #0b0b0b;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+:root{
+  --orange: #ff6a00;
+  --dark: #0b0b0b;
+  --muted: #666666;
+  --container: 1100px;
+}
+
+/* Simple centered container used by components */
+.container{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Navbar tweaks to keep everything aligned and centered */
+.navbar-custom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:.6rem 1rem;
+  background:transparent;
+}
+
+/* HERO layout: center content and make art sit to the right but keep everything centered on page */
+.hero{padding:3rem 0}
+.hero-grid{
+  display:grid;
+  grid-template-columns: 1fr 380px;
+  gap:2rem;
+  align-items:center;
+  justify-content:center;
+}
+.hero-copy{padding-right:1rem}
+.kicker{color:var(--orange);font-weight:700;margin:0}
+.lead{color:var(--muted);line-height:1.5}
+
+.app-logo-large{width:300px;height:300px;border-radius:50%;background:#ffd8b8;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px rgba(11,11,11,0.08);overflow:hidden}
+.app-logo-img{width:100%;height:100%;object-fit:cover}
+
+/* Tracker and status area centered */
+.rastreo{margin:2.5rem auto}
+.track-form{display:flex;flex-direction:column;gap:.6rem;max-width:540px}
+.status-box{margin-top:1rem;padding:1rem;border-radius:8px;background:white;border:1px solid #efefef}
+
+/* Buttons */
+.btn-orange{background:var(--orange);color:#fff;border:none;padding:.6rem .9rem;border-radius:12px}
+
+/* Responsive: stack columns and center */
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr;text-align:center}
+  .hero-art{order:-1}
+  .app-logo-large{width:260px;height:260px;margin:0 auto}
+}
+
+@media (max-width:420px){
+  .app-logo-large{width:200px;height:200px}
+}
