@@ -45,15 +45,4 @@ Ejemplo rápido (backend) — pseudocódigo:
 ```
 GET /api/track?order=12345  -> El servidor llama a PedidosYa con token privado y responde con el estado
 ```
-
-Notas y siguientes pasos recomendados
-
-- Reemplaza el espacio circular `app-logo-large` por tu logo real (`<img src="logo.png">`) para que coincida con tu identidad.
-- Añade validaciones y seguridad en el backend, sobre todo para llamadas a la API de PedidosYa.
-- Implementa WebSockets o polling para recibir actualizaciones en tiempo real del estado del pedido.
-- Agrega un pequeño backend que reciba notificaciones o que re-consulte la API para actualizar el estado y notificar a los repartidores.
-
-Si quieres, puedo:
-- Integrar un ejemplo de backend en Node.js/Express que haga proxy a la API de PedidosYa.
-- Mejorar los estilos (fuentes, tipografías, microanimaciones) o añadir una versión móvil optimizada.
 # Grav-Go
