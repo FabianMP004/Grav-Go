@@ -9,12 +9,25 @@ const PORT = process.env.PORT || 5000;
 // Middlewares
 app.use(express.json());
 
-// CORS middleware - allow requests from React dev server
+// CORS middleware
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://grav-go.vercel.app', // Reemplaza con tu URL de Vercel
+  ];
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
   next();
 });
 
@@ -28,6 +41,16 @@ connectDB();
 // Example route
 app.get('/', (req, res) => {
   res.send('API is running');
+});
+
+// Debug route (remove in production)
+app.get('/debug', (req, res) => {
+  res.json({
+    message: 'Debug info',
+    mongoUri: process.env.MONGO_URI ? 'Present' : 'Missing',
+    jwtSecret: process.env.JWT_SECRET ? 'Present' : 'Missing',
+    nodeEnv: process.env.NODE_ENV || 'Not set'
+  });
 });
 
 // Error handling middleware - must be after routes
