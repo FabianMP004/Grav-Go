@@ -58,7 +58,7 @@ function App(){
       throw new Error('No user logged in');
     }
     try{
-      const res = await fetch('/api/auth/topup', {
+      const res = await fetch('https://grav-go.onrender.com/api/auth/topup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: currentUser.email, amount })
