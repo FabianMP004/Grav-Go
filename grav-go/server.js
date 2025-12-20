@@ -21,10 +21,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
-const authRoutes = require('./routes/auth');
-app.use('/api/auth', authRoutes);
-
 // Connect to MongoDB
 connectDB();
 
@@ -42,6 +38,10 @@ app.get('/debug', (req, res) => {
     nodeEnv: process.env.NODE_ENV || 'Not set'
   });
 });
+
+// Routes
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
 
 // Error handling middleware - must be after routes
 app.use((err, req, res, next) => {
