@@ -13,7 +13,7 @@ export default function RegisterForm({ onRegistered, switchToLogin }){
     setError(''); setSuccess('');
     setLoading(true);
     try{
-      const res = await fetch('https://grav-go.onrender.com/auth/register', {
+      const res = await fetch('https://grav-go.onrender.com/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
