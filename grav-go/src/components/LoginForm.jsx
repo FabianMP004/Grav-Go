@@ -12,11 +12,11 @@ export default function LoginForm({ onLogin, switchToRegister }){
     setLoading(true);
     try{
       const res = await fetch('/api/auth/login', {
+      // Endpoint: Inicia sesión y retorna el usuario y token
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      // try to parse JSON response (may fail if server is down or returns non-json)
       let data = null;
       try{ data = await res.json(); }catch(e){ data = null; }
       if(!res.ok){

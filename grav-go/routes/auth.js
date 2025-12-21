@@ -5,6 +5,40 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+// POST /api/auth/pay
+router.post(
+  '/pay',
+  [
+    check('email', 'Please include a valid email').isEmail(),
+    check('amount', 'Amount must be a positive number').isFloat({ gt: 0 }),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, amount } = req.body;
+    try {
+      const user = await User.findOne({ email });
+      if (!user) return res.status(404).json({ message: 'User not found' });
+
+      const newBalance = +( (user.balance || 0) - Number(amount) ).toFixed(2);
+      if (newBalance < 0) return res.status(400).json({ message: 'Insufficient balance' });
+      user.balance = newBalance;
+      await user.save();
+
+      // Return updated user info
+      return res.json({ user: { id: user.id, name: user.name, email: user.email, balance: user.balance } });
+    } catch (err) {
+      console.error(err);
+      const payload = { message: 'Server error' };
+      if (process.env.NODE_ENV !== 'production') payload.error = err.message || err;
+      res.status(500).json(payload);
+    }
+  }
+);
+
 // POST /api/auth/register
 router.post(
   '/register',

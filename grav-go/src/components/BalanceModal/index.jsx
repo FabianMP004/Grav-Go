@@ -3,9 +3,9 @@ import './styles.css';
 
 export default function BalanceModal({ visible, balance = 0, onTopUp, onClose }){
   const [amount, setAmount] = useState(10);
-  const [card, setCard] = useState('4242 4242 4242 4242');
-  const [expiry, setExpiry] = useState('12/30');
-  const [cvv, setCvv] = useState('123');
+  const [card, setCard] = useState('1234 5678 9012 3456');
+  const [expiry, setExpiry] = useState('12/25');
+  const [cvv, setCvv] = useState('007');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [showForm, setShowForm] = useState(false);

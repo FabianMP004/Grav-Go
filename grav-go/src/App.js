@@ -53,12 +53,12 @@ function App(){
   }
 
   const handleTopUp = async (amount) => {
-    // Try to perform top-up on backend; fallback to local update if network fails
     if(!currentUser){
       throw new Error('No user logged in');
     }
     try{
-      const res = await fetch('/api/auth/topup', {
+      const res = await fetch('http://localhost:5000/api/auth/topup', {
+      // Endpoint: Suma el monto al balance del usuario en la base de datos
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: currentUser.email, amount })
@@ -97,16 +97,43 @@ function App(){
   }
 
   const handlePay = (amount) => {
-    const newBal = +(Math.max(0, balance - amount)).toFixed(2);
-    setBalance(newBal);
-    if(currentUser){
-      const updatedUser = { ...currentUser, balance: newBal };
-      setCurrentUser(updatedUser);
-      localStorage.setItem('gravgo_user', JSON.stringify(updatedUser));
-      const updatedUsers = users.map(u => u.email === updatedUser.email ? updatedUser : u);
-      setUsers(updatedUsers);
-      localStorage.setItem('gravgo_users', JSON.stringify(updatedUsers));
+    if(!currentUser){
+      throw new Error('No user logged in');
     }
+    fetch('http://localhost:5000/api/auth/pay', {
+    // Endpoint: Resta el monto al balance del usuario en la base de datos
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: currentUser.email, amount })
+    })
+      .then(async res => {
+        const data = await res.json();
+        if(!res.ok){
+          throw new Error((data && (data.message || (data.errors && data.errors[0] && data.errors[0].msg))) || `Error ${res.status}`);
+        }
+        const updatedUser = data.user;
+        const newBal = +(updatedUser.balance || 0);
+        setBalance(newBal);
+        setCurrentUser(updatedUser);
+        localStorage.setItem('gravgo_user', JSON.stringify(updatedUser));
+        const updatedUsers = users.map(u => u.email === updatedUser.email ? updatedUser : u);
+        setUsers(updatedUsers);
+        localStorage.setItem('gravgo_users', JSON.stringify(updatedUsers));
+      })
+      .catch(err => {
+        console.error('Pay failed', err);
+        // fallback local update
+        const newBal = +(Math.max(0, balance - amount)).toFixed(2);
+        setBalance(newBal);
+        if(currentUser){
+          const updatedUser = { ...currentUser, balance: newBal };
+          setCurrentUser(updatedUser);
+          localStorage.setItem('gravgo_user', JSON.stringify(updatedUser));
+          const updatedUsers = users.map(u => u.email === updatedUser.email ? updatedUser : u);
+          setUsers(updatedUsers);
+          localStorage.setItem('gravgo_users', JSON.stringify(updatedUsers));
+        }
+      });
   }
 
   const handleLogout = () => {
